@@ -1,2 +1,2 @@
-# typescript_webapp
-typescript tutorial web application
+# typescript-application
+Sample application created for TypeScript course on http://eduweb.pl/
