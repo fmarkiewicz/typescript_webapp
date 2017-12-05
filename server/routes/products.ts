@@ -14,8 +14,8 @@ export class Products {
         router.put('/products/:product_id', productsRoute.update.bind(productsRoute));
         router.delete('/products/:product_id', productsRoute.delete.bind(productsRoute));
         router.get('/products/:product', productsRoute.find.bind(productsRoute));
-        router.post('/products/delete/:product_id', productsRoute.delete.bind(productsRoute));
-        router.post('/products/update/:product_id', productsRoute.update.bind(productsRoute));
+        // router.post('/products/delete/:product_id', productsRoute.delete.bind(productsRoute));
+        // router.post('/products/update/:product_id', productsRoute.update.bind(productsRoute));
 
         return router;
     }
