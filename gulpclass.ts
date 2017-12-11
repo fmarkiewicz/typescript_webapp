@@ -31,8 +31,35 @@ export class Gulpfile{
 
     }
 
+    @Task("build:client")
+    buildClient() {
+        var tsProject = ts.createProject(
+            path.resolve('./client/tsconfig.json')
+        );
+        var tsResult = gulp.src(['./client/**/*.ts'])
+            .pipe(sourcemaps.init())
+            .pipe(ts(tsProject));
+        return tsResult.js
+            .pipe(sourcemaps.write())
+            .pipe(gulp.dest(
+                path.resolve('./dist/client')
+            ));
+    }
+
+    @Task("copy:client")
+    copyClient() {
+        return gulp.src([
+            './client/systemjs.config.js',
+            './client/index.html',
+            './client/styles.css'
+        ])
+        .pipe(gulp.dest(
+            path.resolve('./dist/client')
+        ))
+    }
+
     @SequenceTask()
     default() {
-        return ['clean', 'build:server'];
+        return ['clean', 'build:server', 'build:client', 'copy:client'];
     }
 }
