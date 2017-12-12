@@ -4,23 +4,32 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
     selector: 'my-app',
-    template: `<h1>Products</h1>
+    template: `<h1>Produkty</h1>
+    <div>
+        <label>Nazwa produktu:</label><input #productName /><br />
+        <label>Ilość produktu:</label><input #productQuantity /><br />
+        <button (click)="add(productName.value, productQuantity.value); productName.value=''; productQuantity.value='';">
+            Dodaj produkt
+        </button>
+    </div>
     <ul class="products">
         <li *ngFor="let product of products" (click)="onSelect(product)"
             [class.selected]="product === selectedProduct"
         >
             <span class="quantity">{{product.quantity}}</span>
             {{product.name}}
+            <button class="delete" (click)="delete(product); $event.stopPropagation();">x</button>
         </li>
     </ul>
     <div *ngIf="selectedProduct">
         <h2>{{selectedProduct.name}} - {{selectedProduct.quantity}}</h2>
         <div><label>id: </label>{{selectedProduct.id}}</div>
         <div>
-            <label>name: </label>
+            <label>Nazwa: </label>
             <input [(ngModel)]="selectedProduct.name" placeholder="name" />
-            <label>quantity: </label>
+            <label>Ilość: </label>
             <input [(ngModel)]="selectedProduct.quantity" placeholder="quantity" />
+            <button (click)="save()">Zapisz</button>
         </div>
     </div>
     `,
@@ -58,6 +67,13 @@ import { Component, OnInit } from '@angular/core';
             display: inline-block;
             font-size: small;
         }
+        button.delete {
+            float: right;
+            margin-top: 2px;
+            margin-right: .8em;
+            background-color: gray !important;
+            color: white;
+        }
         `
     ],
     providers: [ProductService]
@@ -83,4 +99,33 @@ export class AppComponent implements OnInit {
         this.getProducts();
     }
 
+    save(): void {
+        this.productService.update(this.selectedProduct)
+        .then(() => this.getProducts());
+    }
+
+    add(productName: string, productQuantity: string): void {
+        productName = productName.trim();
+        productQuantity = productQuantity.trim();
+
+        if (!productName || !productQuantity) {
+            return;
+        }
+
+        this.productService.create(productName, productQuantity)
+            .then(products => {
+                this.products = products;
+                this.selectedProduct = null;
+            });
+    }
+    delete(product: Product): void {
+        this.productService
+            .delete(product.id)
+            .then(() => {
+                this.products = this.products.filter(p => p!== product);
+                if (this.selectedProduct == product) {
+                    this.selectedProduct = null;
+                }
+            });
+    }
 }
